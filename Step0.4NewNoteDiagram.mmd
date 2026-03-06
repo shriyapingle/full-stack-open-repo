@@ -1,0 +1,20 @@
+sequenceDiagram
+    actor User
+    participant Browser
+    participant Server
+
+    User->>Browser: Types note and clicks "Save"
+    Browser->>Server: POST /exampleapp/new_note (new note is sent as payload)
+    Server-->>Browser: Returns 302 Found and calls /exampleapp/notes
+    Browser->>Server: GET /exampleapp/notes
+    Server-->>Browser: 200 OK (HTML page is fetched)
+    Note over Browser: HTML page has link and script tags
+    Browser->>Server: GET /exampleapp/main.css
+    Server-->>Browser: 200 OK (main.css is fetched)
+    Browser->>Server: GET /exampleapp/main.js
+    Server-->>Browser: 200 OK (main.js is fetched)
+    Note over Browser: main.js makes a GET request to get Notes data
+    Browser->>Server: GET /exampleapp/data.json
+    Server-->>Browser: 200 OK (Notes data is fetched and onlt the 'content' is used to display notes)
+    Note over Browser: Browser reloads page
+    Browser-->>User: Note is displayed on the screen

@@ -1,0 +1,10 @@
+sequenceDiagram
+    actor User
+    participant Browser
+    participant Server
+
+    User->>Browser: Types note and clicks "Save"
+    Note over Browser: Browser adds the new note to the existing notes in the spa.js file and also makes the POST request
+    Browser->>User: The new note is added to the screen and visible to the user
+    Browser->>Server: POST /exampleapp/new_note_spa (new note is sent as payload)
+    Server-->>Browser: Returns 201 Found and calls /exampleapp/notes

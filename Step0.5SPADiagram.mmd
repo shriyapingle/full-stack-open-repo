@@ -1,0 +1,18 @@
+sequenceDiagram
+    actor User
+    participant Browser
+    participant Server
+
+    User->>Browser: Loads the url 'https://studies.cs.helsinki.fi/exampleapp/spa'
+    Browser->>Server: GET /exampleapp/spa
+    Server-->>Browser: 200 OK (HTML page is fetched)
+    Note over Browser: HTML page has link and script tags
+    Browser->>Server: GET /exampleapp/main.css
+    Server-->>Browser: 200 OK (main.css is fetched)
+    Browser->>Server: GET /exampleapp/spa.js
+    Server-->>Browser: 200 OK (spa.js is fetched)
+    Note over Browser: spa.js makes a GET request to get Notes data
+    Browser->>Server: GET /exampleapp/data.json
+    Server-->>Browser: 200 OK (Notes data is fetched and onlt the 'content' is used to display notes)
+    Note over Browser: Browser creates the notes list from the spa.js file and the page is loaded
+    Browser-->>User: The single page application is loaded
