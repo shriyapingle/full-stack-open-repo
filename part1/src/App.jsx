@@ -1,7 +1,7 @@
 const Header = (props) => {
   return (
     <div>
-      <h1>{props.name}</h1>
+      <h1>{props.name.name}</h1>
     </div>
   )
 }
@@ -59,7 +59,7 @@ const App = () => {
 
   return (
     <div>
-      <Header course={course} />
+      <Header name={course} />
       <Content parts={course} />
       <Total parts={course} />
     </div >
