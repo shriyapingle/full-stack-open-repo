@@ -1,2 +1,9 @@
-const Display = ({ text, value }) => < div > {text}:  {value}</div >
+const Display = ({props}) => {
+    
+    if(Number.isInteger(props)) {
+        return <div>has {props} votes</div>
+    }
+    return <div>{props}</div>
+
+}
 export default Display
