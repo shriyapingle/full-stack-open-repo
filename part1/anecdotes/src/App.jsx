@@ -25,7 +25,6 @@ const App = () => {
     const copyVotes = [...votes]
     copyVotes[selected] +=1
     setVote(copyVotes)
-    console.log(copyVotes)
   }
 
   return (
