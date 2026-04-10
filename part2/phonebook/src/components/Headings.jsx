@@ -1,0 +1,1 @@
+export default function Headings({props}) { return <h2>{props}</h2> }
