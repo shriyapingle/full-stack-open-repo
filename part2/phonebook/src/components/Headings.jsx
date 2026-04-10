@@ -1,1 +1,4 @@
-export default function Headings({props}) { return <h2>{props}</h2> }
+export default function Headings({ htype, props }) {
+    const Tag = htype
+    return <Tag>{props}</Tag>
+}

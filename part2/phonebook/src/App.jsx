@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import Headings from './components/Headings';
 import Display from './components/Display';
-
+import Search from './components/Search';
+import AddNewContact from './components/AddNewContact';
 
 
 const App = () => {
@@ -16,7 +17,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [searchOn, setSearchOn] = useState(false)
   const [searchList, setSearchList] = useState([])
-  const [noRecord,setNoRecord] = useState(false)
+  const [noRecord, setNoRecord] = useState(false)
 
   const handleNewNameChange = (event) => {
     setNewName(event.target.value)
@@ -46,7 +47,7 @@ const App = () => {
     setSearchOn(true)
     const arr = [...persons]
     const filterList = arr.filter(ele => ele.name.toLowerCase().replace(/\s/g, '').match(event.target.value))
-    if(filterList.length===0){
+    if (filterList.length === 0) {
       setNoRecord(true)
     } else {
       setNoRecord(false)
@@ -56,21 +57,14 @@ const App = () => {
 
   return (
     <div>
-      <Headings props="Phonebook" />
-      <form>
-        Filter shown with <input placeholder='Search Name' onChange={searchName} />
-      </form>
-      <Headings props="Add New" />
-      <form onSubmit={handleSubmitNewName}>
-        Name: <input value={newName} placeholder='Contact Name' onChange={handleNewNameChange} /> <br></br>
-        Number: <input type='number' value={newNumber} placeholder='Contact Number' onChange={handleNewNumberChange} /><br></br>
-        <button type="submit">add</button>
-      </form>
-      <Headings props="Numbers" />
-
+      <Headings htype='h2' props="Phonebook" />
+      <Search onChange={searchName} />
+      <Headings htype='h2' props="Add New" />
+      <AddNewContact onSubmit={handleSubmitNewName} nameValue={newName} numberValue={newNumber} onNameChange={handleNewNameChange} onNumberChange={handleNewNumberChange} />
+      <Headings htype='h2' props="Numbers" />
       {!searchOn && <Display props={persons} />}
       {searchOn && <Display props={searchList} />}
-      {searchOn && noRecord && <div>No records found.</div>}
+      {searchOn && noRecord && <Headings htype='div' props="No record found." />}
     </div>
 
   )
