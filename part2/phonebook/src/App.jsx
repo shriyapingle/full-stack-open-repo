@@ -1,23 +1,24 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react';
 import Headings from './components/Headings';
 import Display from './components/Display';
-import Search from './components/Search';
+import Search from './components/search';
 import AddNewContact from './components/AddNewContact';
-
+import axios from 'axios'
+import phoneBookService from './services/phoneBook';
 
 const App = () => {
-  let personsList = [
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ]
-  const [persons, setPersons] = useState(personsList)
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchOn, setSearchOn] = useState(false)
   const [searchList, setSearchList] = useState([])
   const [noRecord, setNoRecord] = useState(false)
+
+  useEffect(() => {
+    phoneBookService.getAll().then(intialContacts => {
+      setPersons(intialContacts)
+    })
+  }, [])
 
   const handleNewNameChange = (event) => {
     setNewName(event.target.value)
@@ -27,20 +28,59 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+  const clear = () => {
+    setNewName('')
+    setNewNumber('')
+  }
+
   const handleSubmitNewName = (event) => {
     setSearchOn(false)
     setNoRecord(false)
     event.preventDefault()
-    if (persons.find(person => person.name.toLowerCase() == newName.toLowerCase())) {
-      return (alert(`${newName} is already added to phonebook`))
-    }
-    const newPersons = [...persons]
-    const newPerson = { name: newName, number: newNumber, id: newPersons.length + 1 }
-    newPersons.push(newPerson)
-    setPersons(newPersons)
 
-    setNewName('')
-    setNewNumber('')
+    if (persons.find(person => person.name.toLowerCase() === newName.toLowerCase() && person.number.replace(/-/g,'') !== newNumber.replace(/-/g,''))) {
+      // clear()
+      if (window.confirm(newName + ' is already added to phonebook, replace the old number with a new one?')) {
+        const existingPerson = persons.find(person => person.name.toLowerCase() === newName.toLowerCase())
+        const newObject = { ...existingPerson, number: newNumber }
+
+        phoneBookService.update(existingPerson.id, newObject).then(response => {
+          setPersons(persons.map(person => person.id === existingPerson.id ? response.data : person))
+          clear()
+        }).catch(err => console.log(err))
+      } else {
+        clear()
+      }
+    } else if ((persons.find(person => person.number.replace(/-/g, '') === newNumber.replace(/-/g, ''))) || (persons.find(person => person.name.toLowerCase() === newName.toLowerCase()) && persons.find(person => person.number.replace(/-/g,'') === newNumber.replace(/-/g,'')))) {
+      clear()
+      return (alert(`${newName} and/or ${newNumber} is already added to phonebook`))
+
+    }else {
+      const newPersons = [...persons]
+      const newPerson = { name: newName, number: newNumber, id: newPersons.length + 1 }
+
+      phoneBookService.create(newPerson).then(response => {
+        if (response.status === 201) {
+          setPersons(persons.concat(response.data))
+          clear()
+        }
+      }).catch(err => console.log(err))
+    }
+  }
+
+  const onDelete = (event) => {
+    
+    const name = (persons.filter(contact => contact.id === event.target.id))[0].name
+    
+    if (window.confirm('Do you want to delete ' + name + '?')) {
+      phoneBookService.remove(event.target.id).then(response => {
+        setPersons(persons.filter(person => person.name.toLowerCase() !== name.toLowerCase()))
+      }).catch(err => console.log(err))
+    } else {
+      console.log('cancel');
+    }
+
+
   }
 
   const searchName = (event) => {
@@ -62,8 +102,8 @@ const App = () => {
       <Headings htype='h2' props="Add New" />
       <AddNewContact onSubmit={handleSubmitNewName} nameValue={newName} numberValue={newNumber} onNameChange={handleNewNameChange} onNumberChange={handleNewNumberChange} />
       <Headings htype='h2' props="Numbers" />
-      {!searchOn && <Display props={persons} />}
-      {searchOn && <Display props={searchList} />}
+      {!searchOn && <Display props={persons} onClick={onDelete} />}
+      {searchOn && <Display props={searchList} onClick={onDelete} />}
       {searchOn && noRecord && <Headings htype='div' props="No record found." />}
     </div>
 
