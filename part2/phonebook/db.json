@@ -29,6 +29,11 @@
       "name": "john doe",
       "number": "778558338",
       "id": "v_pyk4klu38"
+    },
+    {
+      "name": "Pete Tally",
+      "number": "876876876",
+      "id": "zW9yPsT6SYA"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
