@@ -22,12 +22,12 @@
     },
     {
       "content": "new note with services",
-      "important": true,
+      "important": false,
       "id": "ayXWbcPyxYQ"
     },
     {
       "content": "new note 2 with services",
-      "important": false,
+      "important": true,
       "id": "MRqCbzAZvDU"
     }
   ],
